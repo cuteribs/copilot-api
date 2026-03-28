@@ -1,6 +1,7 @@
 import type { FetchFunction } from "@ai-sdk/provider-utils"
 
 import consola from "consola"
+import { randomUUID } from "node:crypto"
 
 import type { SubagentMarker } from "~/routes/messages/subagent-marker"
 
@@ -13,6 +14,7 @@ import { ContextOverflowError, isContextOverflow } from "~/lib/copilot-error"
 import { copilotTokenManager } from "~/lib/copilot-token-manager"
 import { HTTPError } from "~/lib/error"
 import { state } from "~/lib/state"
+import { deriveGuid } from "~/lib/utils"
 
 /**
  * Create a custom fetch that handles Copilot token refresh on 401/403.
@@ -87,6 +89,11 @@ export async function copilotRequest(
   const headers: Record<string, string> = {
     ...copilotHeaders(state, options.vision),
   }
+
+  const sessionId = options.sessionId ?? randomUUID()
+  headers["X-Client-Session-Id"] = sessionId
+  headers["X-Agent-Task-Id"] = deriveGuid(sessionId)
+  headers["X-Interaction-Id"] = deriveGuid(sessionId, 1)
 
   if (options.initiator) {
     headers["X-Initiator"] = options.initiator

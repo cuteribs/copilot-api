@@ -9,7 +9,7 @@ export const standardHeaders = () => ({
 
 const COPILOT_VERSION = "0.35.0"
 const EDITOR_PLUGIN_VERSION = `copilot-chat/${COPILOT_VERSION}`
-const USER_AGENT = `GitHubCopilotChat/${COPILOT_VERSION}`
+const USER_AGENT = `copilot/${COPILOT_VERSION} (win32 v24.11.1) term/unknown`
 
 const API_VERSION = "2025-10-01"
 
@@ -21,14 +21,13 @@ export const copilotHeaders = (state: State, vision: boolean = false) => {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${state.copilotToken}`,
     "content-type": standardHeaders()["content-type"],
-    "copilot-integration-id": "vscode-chat",
+    "copilot-integration-id": "copilot-developer-cli",
     "editor-version": `vscode/${state.vsCodeVersion}`,
     "editor-plugin-version": EDITOR_PLUGIN_VERSION,
     "user-agent": USER_AGENT,
     "openai-intent": "conversation-agent",
     "x-github-api-version": API_VERSION,
     "x-request-id": randomUUID(),
-    "x-vscode-user-agent-library-version": "electron-fetch",
   }
 
   if (vision) headers["copilot-vision-request"] = "true"
@@ -37,17 +36,14 @@ export const copilotHeaders = (state: State, vision: boolean = false) => {
 }
 
 export const prepareSubagentHeaders = (
-  sessionId: string | undefined,
   isSubagent: boolean,
   headers: Record<string, string>,
 ): void => {
   if (isSubagent) {
     headers["x-initiator"] = "agent"
     headers["x-interaction-type"] = "conversation-subagent"
-  }
-
-  if (sessionId) {
-    headers["x-interaction-id"] = sessionId
+  } else {
+    headers["x-interaction-type"] = "conversation-background"
   }
 }
 

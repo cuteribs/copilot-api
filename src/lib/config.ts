@@ -38,7 +38,7 @@ const gpt5ExplorationPrompt = `## Exploration and reading files
 const defaultConfig: AppConfig = {
   extraPrompts: {
     "gpt-5-mini": gpt5ExplorationPrompt,
-    "gpt-5.1-codex-max": gpt5ExplorationPrompt,
+    "gpt-5.4-mini": gpt5ExplorationPrompt,
   },
   smallModel: "gpt-5-mini",
   modelReasoningEfforts: {
